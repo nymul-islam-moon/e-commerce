@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
+
 
 class LoginController extends Controller
 {
@@ -36,5 +38,35 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+    }
+
+    public function login(Request $request)
+    {
+        $validated = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        if (auth()->attempt( array('email' => $request->email, 'password' => $request->password )))
+        {
+            if (auth()->user()->type == 1)
+            {
+                return redirect()->route('admin.home');
+            }
+            else
+            {
+                return redirect()->route('home');
+            }
+        }
+        else
+        {
+            return redirect()->back()->with('error', 'Invalid email or Password');
+        }
+    }
+
+
+    public function adminLogin(Request $request)
+    {
+        return view('')
     }
 }

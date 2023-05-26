@@ -16,6 +16,10 @@ class UserType
      */
     public function handle(Request $request, Closure $next)
     {
-        return $next($request);
+        if (auth()->user()->type == 1)
+        {
+            return $next($request);
+        }
+        return redirect()->route('home')->with('error', 'You are not allowed to access this area');
     }
 }
