@@ -67,6 +67,6 @@ class LoginController extends Controller
 
     public function adminLogin(Request $request)
     {
-        return view('')
+        return view('auth.admin_login');
     }
 }
