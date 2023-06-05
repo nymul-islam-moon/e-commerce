@@ -13,9 +13,6 @@ Route::get('/admin/home', [HomeController::class, 'admin'])->name('admin.home')-
 
 Route::controller(LoginController::class)->prefix('admin-login')->group(function () {
     Route::get('/', 'adminLogin')->name('admin.login');
-    Route::get('/test', function () {
-        return view('admin.home');
-    });
     // Route::get('/orders/{id}', 'show');
     // Route::post('/orders', 'store');
 });

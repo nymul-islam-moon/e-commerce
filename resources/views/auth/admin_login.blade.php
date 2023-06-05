@@ -92,8 +92,9 @@
                                             </div>
 
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="" id="auth-remember-check">
-                                                <label class="form-check-label" for="auth-remember-check">Remember me</label>
+                                                {{-- <input class="form-check-input" type="checkbox" value="" id="auth-remember-check"> --}}
+                                                <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
+                                                <label class="form-check-label" for="auth-remember-check">{{ __('Remember Me') }}</label>
                                             </div>
 
                                             <div class="mt-4">
