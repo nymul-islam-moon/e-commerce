@@ -153,4 +153,11 @@
     </footer>
     <!-- end Footer -->
 </div>
+
+@push('admin_js')
+    <script>
+         toastr.error('hi')
+    </script>
+@endpush
+
 @endsection
