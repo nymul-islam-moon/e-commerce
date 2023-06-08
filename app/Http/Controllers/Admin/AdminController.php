@@ -35,7 +35,7 @@ class AdminController extends Controller
     {
         Auth::logout();
 
-        $notification = array('message' => 'You are logged out !', 'alert-type' => 'success');
+        $notification = array('message' => 'You are logged out !', 'alert-type' => 'info');
 
         return redirect()->route('admin.login')->with($notification);
     }
