@@ -14,7 +14,7 @@
                                 <div class="col-12">
                                     <div class="d-flex align-items-lg-center flex-lg-row flex-column">
                                         <div class="flex-grow-1">
-                                            <h4 class="fs-16 mb-1">Good Morning, Anna!</h4>
+                                            <h4 class="fs-16 mb-1">Good Morning, {{ auth()->user()->first_name }} {{ auth()->user()->last_name }} !</h4>
                                             <p class="text-muted mb-0">Here's what's happening with your store today.</p>
                                         </div>
                                         <div class="mt-3 mt-lg-0">
@@ -750,7 +750,7 @@
                                                             <td>
                                                                 <div class="d-flex align-items-center">
                                                                     <div class="flex-shrink-0 me-2">
-                                                                        <img src="assets/images/users/avatar-2.jpg" alt="" class="avatar-xs rounded-circle" />
+                                                                        <img src="{{ asset('dashboard/assets/images/users/avatar-2.jpg') }}" alt="" class="avatar-xs rounded-circle" />
                                                                     </div>
                                                                     <div class="flex-grow-1">Jansh Brown</div>
                                                                 </div>
@@ -898,7 +898,7 @@
                                             </div>
                                             <div class="acitivity-item py-3 d-flex">
                                                 <div class="flex-shrink-0">
-                                                    <img src="assets/images/users/avatar-2.jpg" alt="" class="avatar-xs rounded-circle acitivity-avatar">
+                                                    <img src="{{ asset('dashboard/assets/images/users/avatar-2.jpg') }}" alt="" class="avatar-xs rounded-circle acitivity-avatar">
                                                 </div>
                                                 <div class="flex-grow-1 ms-3">
                                                     <h6 class="mb-1 lh-base">Natasha Carey have liked the products</h6>
@@ -1108,7 +1108,7 @@
                                                         <div class="card-body">
                                                             <div class="d-flex">
                                                                 <div class="flex-shrink-0">
-                                                                    <img src="assets/images/users/avatar-2.jpg" alt="" class="avatar-sm rounded">
+                                                                    <img src="{{ asset('dashboard/assets/images/users/avatar-2.jpg') }}" alt="" class="avatar-sm rounded">
                                                                 </div>
                                                                 <div class="flex-grow-1 ms-3">
                                                                     <div>
@@ -1286,19 +1286,5 @@
         </div>
         <!-- End Page-content -->
 
-        <footer class="footer">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-sm-6">
-                        <script>document.write(new Date().getFullYear())</script> © Velzon.
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="text-sm-end d-none d-sm-block">
-                            Design & Develop by Themesbrand
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </footer>
     </div>
 @endsection

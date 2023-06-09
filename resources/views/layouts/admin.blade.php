@@ -19,8 +19,7 @@
     <!--Swiper slider css-->
     <link href="{{ asset('dashboard/assets/libs/swiper/swiper-bundle.min.css') }}" rel="stylesheet" type="text/css" />
 
-    <!-- Layout config Js -->
-    <script src="{{ asset('dashboard/assets/js/layout.js') }}"></script>
+
     <!-- Bootstrap Css -->
     <link href="{{ asset('dashboard/assets/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
     <!-- Icons Css -->
@@ -36,7 +35,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" integrity="sha512-vKMx8UnXk60zUwyUnUPM3HbQo8QfmNx7+ltw8Pm5zLusl1XIfwcxo8DbWCqMGKaWeNxWA8yrx5v3SaVpMvR3CA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 
-
+    @stack('css')
 
 </head>
 
@@ -95,6 +94,20 @@
         <!-- ============================================================== -->
         @yield('admin_content')
 
+        <footer class="footer">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <script>document.write(new Date().getFullYear())</script> © Velzon.
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="text-sm-end d-none d-sm-block">
+                            Design & Develop by Themesbrand
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
 
     </div>
 
@@ -873,13 +886,31 @@
     <!-- Dashboard init -->
     <script src="{{ asset('dashboard/assets/js/pages/dashboard-ecommerce.init.js') }}"></script>
 
-    <!-- App js -->
-    <script src="{{ asset('dashboard/assets/js/app.js') }}"></script>
+
     {{-- Toster --}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     {{-- Sweet Alert --}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Layout config Js -->
+    <script src="{{ asset('dashboard/assets/js/layout.js') }}"></script>
+
+
+    <!-- App js -->
+    <script src="{{ asset('dashboard/assets/js/app.js') }}"></script>
+    <!-- list.js min js -->
+    <script src="{{ asset('dashboard/assets/libs/list.js/list.min.js') }}"></script>
+
+    <!--list pagination js-->
+    <script src="{{ asset('dashboard/assets/libs/list.pagination.js/list.pagination.min.js') }}"></script>
+
+    <!-- titcket init js -->
+    <script src="{{ asset('dashboard/assets/js/pages/ticketlist.init.js') }}"></script>
+
+    <!-- Sweet Alerts js -->
+    <script src="{{ asset('dashboard/assets/libs/sweetalert2/sweetalert2.min.js') }}"></script>
+
 
     <script>
         @if(Session::has('message'))
