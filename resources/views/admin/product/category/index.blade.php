@@ -126,7 +126,8 @@
                                 <div class="flex-shrink-0">
                                     <div class="d-flex flex-wrap gap-2">
                                         <button class="btn btn-danger add-btn" data-bs-toggle="modal" data-bs-target="#showModal"><i class="ri-add-line align-bottom me-1"></i> Create Tickets</button>
-                                        <button class="btn btn-soft-danger" id="remove-actions" onclick="deleteMultiple()" style="display: none;"><i class="ri-delete-bin-2-line"></i></button>
+                                        {{-- <button class="btn btn-soft-danger" id="remove-actions" style="display: none;"><i class="ri-delete-bin-2-line"></i></button> --}}
+                                        <button class="btn btn-soft-danger" id="bulk_delete"><i class="ri-delete-bin-2-line"></i></button>
                                     </div>
                                 </div>
                             </div>
@@ -173,7 +174,7 @@
                         <!--end card-body-->
                         <div class="card-body">
                             <div class="table-responsive table-card mb-4">
-                                <table class="table align-middle table-nowrap mb-0 data_tbl table-striped table-hover" id="productCategoryTable">
+                                <table class="table align-middle table-nowrap mb-0 data_tbl table-striped table-hover product__category__table" id="productCategoryTable">
                                     <thead>
                                         <tr>
                                             <th scope="col" style="width: 40px;">
@@ -181,6 +182,7 @@
                                                     <input class="form-check-input" type="checkbox" id="checkAll" value="option">
                                                 </div>
                                             </th>
+                                            <th class="sort desc" data-sort="id">SL</th>
                                             <th class="sort desc" data-sort="id">Code</th>
                                             <th class="sort" data-sort="">Category Name</th>
                                             <th class="sort" data-sort="">Category Slug</th>
@@ -217,23 +219,26 @@
                             <h5 class="modal-title" id="exampleModalLabel">Add Product Category</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
                         </div>
-                        <form class="tablelist-form" action="{{ route('product.category.store') }}" autocomplete="off" id="add_category_form">
+                        <form class="tablelist-form" action="{{ route('product.category.store') }}" autocomplete="off" id="add_category_form" method="POST">
+                            @csrf
+                            @method('POST')
                             <div class="modal-body">
                                 <div class="row g-3">
 
-                                    <div class="col-lg-4">
+                                    <div class="col-lg-6">
                                         <div>
                                             <label for="tasksTitle-field" class="form-label">Code</label>
-                                            <input type="text" id="tasksTitle-field" class="form-control" placeholder="Title" required="">
+                                            <input type="text" id="tasksTitle-field" name="code" class="form-control" placeholder="Category Code">
                                         </div>
                                     </div>
-                                    <div class="col-lg-4">
+                                    <div class="col-lg-6">
                                         <div>
-                                            <label for="tasksTitle-field" class="form-label">Title</label>
-                                            <input type="text" id="tasksTitle-field" class="form-control" placeholder="Title" required="">
+                                            <label for="tasksTitle-field" class="form-label">Name</label>
+                                            <input type="text" required id="name" name="name" class="form-control" placeholder="Category Name">
+                                            <span class="error error_name text-danger"></span>
                                         </div>
                                     </div>
-                                    <div class="col-lg-4">
+                                    {{-- <div class="col-lg-4">
                                         <div>
                                             <label for="tasksTitle-field" class="form-label">Title</label>
                                             <input type="text" id="tasksTitle-field" class="form-control" placeholder="Title" required="">
@@ -277,14 +282,14 @@
                                             <option value="Medium">Medium</option>
                                             <option value="Low">Low</option>
                                         </select>
-                                    </div>
+                                    </div> --}}
                                 </div>
 
                             </div>
                             <div class="modal-footer" style="display: block;">
                                 <div class="hstack gap-2 justify-content-end">
                                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn btn-success" id="add-btn">Add Ticket</button>
+                                    <button type="submit" class="btn btn-success" id="add-btn">Add Category</button>
                                     <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
                                 </div>
                             </div>
@@ -298,6 +303,18 @@
     </div>
     <!-- End Page-content -->
 </div>
+
+<div class="modal fade zoomIn" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-dialog-centered modal-lg" id="edit-content">
+
+    </div>
+</div>
+
+<form id="deleted_form" action="" method="post">
+    @method('DELETE')
+    @csrf
+</form>
+
 @endsection
 
 @push('admin_js')
@@ -317,56 +334,183 @@
             serverSide: true,
             ajax: "{{ route('product.category.index') }}",
             columns: [
+                {data: 'checkbox', name: 'checkbox', orderable: false, searchable: false},
                 {data: 'DT_RowIndex', name: 'DT_RowIndex'},
                 {data: 'code', name: 'code'},
                 {data: 'name', name: 'name'},
                 {data: 'slug', name: 'slug'},
                 {data: 'created_at', name: 'created_at'},
                 {data: 'updated_at', name: 'updated_at'},
-                {data: 'action', name: 'action'},
+                {data: 'action', name: 'action', orderable: false, searchable: false},
 
             ]
         });
 
+        $(document).on('click', '#bulk_delete', function(e) {
+            var ids = [];
 
+            if(confirm("Are you sure you want to delete !"))
+            {
+                $('.category_checkbox:checked').each( function(e) {
+                    ids.push($(this).val());
+                });
+                if(ids.length > 0)
+                {
+                    alert(ids);
+                }
+                else
+                {
+                    alert("Please Select atlest one category");
+                }
+            }
+        });
 
         $(document).on('submit', '#add_category_form', function(e) {
-                e.preventDefault();
-                // $('.loading_button').show();
-                var url = $(this).attr('action');
-                $('.submit_button').prop('type', 'button');
+            e.preventDefault();
+            // $('.loading_button').show();
+            var url = $(this).attr('action');
+            $('.submit_button').prop('type', 'button');
 
-                $.ajax({
-                    url: url,
-                    type: 'post',
-                    data: new FormData(this),
-                    contentType: false,
-                    cache: false,
-                    processData: false,
-                    success: function(data) {
-                        // $('#add_category_form')[0].reset();
+            $.ajax({
+                url: url,
+                type: 'post',
+                data: new FormData(this),
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function(data) {
+                    $('#add_category_form')[0].reset();
 
-                        // $('#myModal').modal('hide');
+                    $('#showModal').modal('hide');
 
-                        // $('.submit_button').prop('type', 'submit');
+                    $('.submit_button').prop('type', 'submit');
 
-                        // $('.contact_table').DataTable().ajax.reload();
-                        // toastr.success(data)
+                    $('.product__category__table').DataTable().ajax.reload();
+                    toastr.success(data)
 
-                    },
-                    error: function(err) {
-                        let error = err.responseJSON;
+                },
+                error: function(err) {
+                    let error = err.responseJSON;
 
-                        $.each(error.errors, function (key, error){
+                    $.each(error.errors, function (key, error){
 
-                            $('.submit_button').prop('type', 'submit');
-                            $('.error_' + key + '').html(error[0]);
-                        });
-                    }
-                });
+                        $('.submit_button').prop('type', 'submit');
+                        $('.error_' + key + '').html(error[0]);
+                    });
+                }
             });
+        });
+
+        $(document).on('click', '#delete_btn', function(e) {
+            e.preventDefault();
+
+            var url = $(this).attr('href');
+            $('#deleted_form').attr('action', url);
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger'
+                },
+                buttonsStyling: false
+            })
+
+            swalWithBootstrapButtons.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'No, cancel!',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $('#deleted_form').submit();
+                } else if (
+                    result.dismiss === Swal.DismissReason.cancel
+                ) {
+                    swalWithBootstrapButtons.fire(
+                    'Cancelled',
+                    'You have cancelled to Delete It',
+                    'error'
+                    )
+                }
+            })
+        })
+
+        $(document).on('submit', '#deleted_form', function(e) {
+            e.preventDefault();
+            var url = $(this).attr('action');
+            $.ajax({
+                url: url,
+                type: 'get',
+                success: function(data) {
+                    toastr.error(data)
+                    $('.product__category__table').DataTable().ajax.reload();
+                },
+                error: function(err) {
+                    toastr.error(err.responseJSON)
+                    $('.product__category__table').DataTable().ajax.reload();
+                }
+            });
+        });
+
+
+        $(document).on('click', '#edit_btn', function(e) {
+            e.preventDefault();
+
+            var url = $(this).attr('href');
+
+            $.ajax({
+                url: url,
+                type: 'get',
+                success: function(data) {
+
+                    $('#edit-content').empty();
+                    $('#edit-content').html(data);
+                    $('#editModal').modal('show');
+                },
+                error: function(err) {
+                    $('.data_preloader').hide();
+                    if (err.status == 0) {
+                        toastr.error('Net Connetion Error. Reload This Page.');
+                    } else if (err.status == 500) {
+                        toastr.error('Server Error, Please contact to the support team.');
+                    }
+                }
+            });
+        });
 
     });
 </script>
 
 @endpush
+{{--
+// $.ajax({
+    //     url:"{{ route('product.category.destroyall') }}",
+    //     type: 'post',
+    //     data:{ids:1},
+    //     contentType: false,
+    //     cache: false,
+    //     processData: false,
+    //     success: function(data) {
+    //         console.log(data);
+    //         // $('#add_category_form')[0].reset();
+
+    //         // $('#showModal').modal('hide');
+
+    //         // $('.submit_button').prop('type', 'submit');
+
+    //         // $('.product__category__table').DataTable().ajax.reload();
+    //         // toastr.success(data)
+
+    //     },
+    //     error: function(err) {
+    //         let error = err.responseJSON;
+
+    //         $.each(error.errors, function (key, error){
+
+    //             $('.submit_button').prop('type', 'submit');
+    //             $('.error_' + key + '').html(error[0]);
+    //         });
+    //     }
+    // }); --}}

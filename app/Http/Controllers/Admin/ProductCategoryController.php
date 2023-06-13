@@ -7,8 +7,10 @@ use Illuminate\Http\Request;
 use App\Models\ProductCategory;
 use Yajra\DataTables\Facades\DataTables;
 use Carbon\Carbon;
+use App\Service\generate_code;
 use App\Http\Requests\StoreProductCategoryRequest;
 use App\Http\Requests\UpdateProductCategoryRequest;
+use Illuminate\Support\Str;
 
 class ProductCategoryController extends Controller
 {
@@ -19,7 +21,7 @@ class ProductCategoryController extends Controller
      */
     public function index(Request $request)
     {
-        $productCategories = ProductCategory::all();
+        $productCategories = ProductCategory::orderBy('id', 'DESC')->get();
         if ($request->ajax()) {
             return DataTables::of($productCategories)
                 ->addIndexColumn()
@@ -32,8 +34,8 @@ class ProductCategoryController extends Controller
                     $html .='Action';
                     $html .='</button>';
                     $html .='<ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">';
-                    $html .='<li><a class="dropdown-item" href="" id="edit_btn">Edit</a></li>';
-                    $html .='<li><a class="dropdown-item" href="" id="delete_btn">Delete</a></li>';
+                    $html .='<li><a class="dropdown-item" href="'. route('product.category.edit', $row->id) .'" id="edit_btn">Edit</a></li>';
+                    $html .='<li><a class="dropdown-item" href="'. route('product.category.destroy', $row->id) .'" id="delete_btn">Delete</a></li>';
                     $html .='</ul>';
                     $html .='</div>';
                     $html .='</div>';
@@ -44,13 +46,16 @@ class ProductCategoryController extends Controller
                     return $row->id % 2 == 0 ? 'table-primary' : 'table-danger';
                 })
                 ->editColumn('created_at', function ($row) {
-                    return Carbon::parse($row->created_at)->diffForHumans();;
+                    return Carbon::parse($row->created_at)->diffForHumans();
                 })
                 ->editColumn('updated_at', function ($row) {
-                    return Carbon::parse($row->created_at)->diffForHumans();;
+                    return Carbon::parse($row->created_at)->diffForHumans();
+                })
+                ->addColumn('checkbox', function ($row) {
+                    return '<input class="form-check-input category_checkbox" type="checkbox" name="category_checkbox[]" value="{{ $row->id }}" />';
                 })
 
-                ->rawColumns(['action'])
+                ->rawColumns(['action', 'checkbox'])
                 ->make(true);
             }
         return view('admin.product.category.index', compact('productCategories'));
@@ -72,10 +77,21 @@ class ProductCategoryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    // public function store(StoreProductCategoryRequest $request)
-    public function store(Request $request)
+    public function store(StoreProductCategoryRequest $request, generate_code $codeGenerate)
     {
-        dd('hi');
+        $formData = $request->validated();
+
+        $expenseObj = new ProductCategory;
+        $tableName = $expenseObj->getTable();
+
+        $formData['code'] = isset($formData['code']) ? $formData['code'] : $codeGenerate->code($tableName);
+
+
+        $formData['slug'] = Str::slug($formData['name'], '-');
+
+        ProductCategory::insert($formData);
+
+        return response()->json('Product Category Created Successfully');
     }
 
     /**
@@ -95,9 +111,9 @@ class ProductCategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(ProductCategory $productCategory)
     {
-        //
+        return view('admin.product.category.edit', compact('productCategory'));
     }
 
     /**
@@ -107,9 +123,15 @@ class ProductCategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateProductCategoryRequest $request, ProductCategory $productCategory)
     {
-        //
+        $formData = $request->validated();
+
+        $formData['slug'] = Str::slug($formData['name'], '-');
+
+        $productCategory->update($formData);
+
+        return response()->json('Product Category Updated Successfully');
     }
 
     /**
@@ -118,8 +140,14 @@ class ProductCategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(ProductCategory $productCategory)
     {
-        //
+        $productCategory->delete();
+        return response()->json('Product Category Deleted Successfully');
+    }
+
+    function destroyall(Request $request)
+    {
+        dd($request->ids);
     }
 }

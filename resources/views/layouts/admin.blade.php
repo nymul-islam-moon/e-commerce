@@ -10,6 +10,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
     <meta content="Themesbrand" name="author" />
+
+    {{-- fFor Ajax Request --}}
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- App favicon -->
     <link rel="shortcut icon" href="assets/images/favicon.ico">
 
@@ -94,20 +97,7 @@
         <!-- ============================================================== -->
         @yield('admin_content')
 
-        <footer class="footer">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-sm-6">
-                        <script>document.write(new Date().getFullYear())</script> © Velzon.
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="text-sm-end d-none d-sm-block">
-                            Design & Develop by Themesbrand
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </footer>
+
 
     </div>
 
@@ -865,6 +855,7 @@
         </div>
     </div>
 
+
     <!-- JAVASCRIPT -->
     <script src="{{ asset('dashboard/assets/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('dashboard/assets/libs/simplebar/simplebar.min.js') }}"></script>
@@ -913,6 +904,13 @@
 
 
     <script>
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
         @if(Session::has('message'))
             var type="{{ Session::get('alert-type', 'info') }}"
             var message="{{ Session::get('message') }}"
@@ -957,13 +955,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     window.location.href = url;
-                    // swalWithBootstrapButtons.fire(
-                    // 'Deleted!',
-                    // 'Your file has been deleted.',
-                    // 'success'
-                    // )
                 } else if (
-                    /* Read more about handling dismissals below */
                     result.dismiss === Swal.DismissReason.cancel
                 ) {
                     swalWithBootstrapButtons.fire(

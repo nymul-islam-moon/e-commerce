@@ -21,6 +21,10 @@ Route::prefix('admin')->group(function () {
     Route::controller(ProductCategoryController::class)->prefix('product-category')->group( function (){
         Route::get('/', 'index')->name('product.category.index');
         Route::post('/store', 'store')->name('product.category.store');
+        Route::get('/{productCategory}/edit', 'edit')->name('product.category.edit');
+        Route::put('/{productCategory}/update', 'update')->name('product.category.update');
+        Route::get('/{productCategory}/destroy', 'destroy')->name('product.category.destroy');
+        // Route::get('/category/{ids}', 'destroyall')->name('product.category.destroyall');
     });
 
 });
