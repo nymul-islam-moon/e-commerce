@@ -21,10 +21,19 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->tinyInteger('gender')->nullable();
             $table->boolean('type')->nullable();
+            $table->unsignedBigInteger('division_id')->nullable();
+            $table->unsignedBigInteger('district_id')->nullable();
+            $table->unsignedBigInteger('upazila_id')->nullable();
+            $table->unsignedBigInteger('union_id')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
+
+            $table->foreign('division_id')->references('id')->on('divisions')->onDelete('SET NULL');
+            $table->foreign('district_id')->references('id')->on('districts')->onDelete('SET NULL');
+            $table->foreign('upazila_id')->references('id')->on('upazilas')->onDelete('SET NULL');
+            $table->foreign('union_id')->references('id')->on('unions')->onDelete('SET NULL');
         });
     }
 
